@@ -24,7 +24,7 @@ class MenuScene: SKScene {
             if atPoint(location).name == "High Score" {
                 if let scene = GameScene(fileNamed: "HighScore") {
                     scene.scaleMode = .aspectFill
-                    view?.presentScene(scene, transition: SKTransition.crossFade(withDuration: 2))
+                    view?.presentScene(scene, transition: SKTransition.doorsOpenHorizontal(withDuration: 2))
                 }
             }
 
