@@ -22,9 +22,9 @@ class Player: SKSpriteNode {
     
     func move(forward: Bool) {
         if forward {
-            position.y += 15;
-        }else {
             position.y -= 15;
+        }else {
+            position.y += 15;
         }
     }
     
