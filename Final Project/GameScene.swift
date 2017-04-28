@@ -11,19 +11,18 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate{
     
-    var player: Player?;
-    var canMoveLeft = false;
-    var moveLeft = false;
-    var center = CGFloat();
+    var player: Player?
+    var canMoveLeft = false
+    var moveLeft = false
+    var center = CGFloat()
+    var playerCenter = CGFloat()
 
     var enemyController = controller()
     
-    var scoreLabel:SKLabelNode!;
-    var score:Int = 0 {
-        didSet {
-            scoreLabel.text = "Score: \(score)";
-        }
-    }
+    var score:SKLabelNode!
+    var rocketCount:SKLabelNode!
+    var rockets = 3
+    var canFire = 0
     
     //var gameTimer:Timer!;
     //Add other enemy pngs
@@ -33,12 +32,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     //let rocketID:UInt32 = 0x1 << 0;
 
     override func didMove(to view: SKView) {
-        initializeGame();
+        initializeGame()
         //self.scene
     }
     
     override func update(_ currentTime: TimeInterval) {
-        movePlayer();
+        movePlayer()
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -57,7 +56,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         
         if first.node?.name == "Player" && second.node?.name == "rocket"
         {
-            
+            rockets += 1
+            rocketCount?.text = String(rockets)
+            first.node?.removeFromParent()
         }
         if first.node?.name == "Player" && second.node?.name == "astroid"
         {
@@ -71,12 +72,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     func initializeGame() {
         
         physicsWorld.contactDelegate = self
-        player = childNode(withName: "Player") as? Player!;
+        player = childNode(withName: "Player") as? Player!
         player?.playerPhysics()
         
-        center = self.frame.size.width / self.frame.size.height;
+        score = childNode(withName: "Score") as? SKLabelNode!
+        score?.text = "0"
+        rocketCount = childNode(withName: "Rockets") as? SKLabelNode!
+        rocketCount?.text = "3"
+        
+        center = self.frame.size.width / self.frame.size.height
+        //playerCenter = player?.size.width / (player?.size.height)!
+        
+        
         
         Timer.scheduledTimer(timeInterval: TimeInterval(enemyController.randNum(first: 1, second: 2)), target: self, selector: #selector(GameScene.spawnEnemy), userInfo: nil, repeats: true)
+        
+        Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(GameScene.removeEnemyNodes), userInfo: nil, repeats: true)
         
         //Need to fix the score lable. need to add it to the game scene manually
         //scoreLabel = SKLabelNode(text: "Score: 0");
@@ -107,6 +118,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         canMoveLeft = true;
     
 }
+    
+    /*override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches
+        {
+            if location.x
+        }
+    }*/
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         canMoveLeft = false;
     }
@@ -128,6 +147,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
              view?.presentScene(scene, transition: SKTransition.crossFade(withDuration: 2))
         }
     }
+    
+    func removeEnemyNodes(){
+        for child in children {
+            if child.name == "rocket" || child.name == "astroid"
+            {
+                if child.position.y < -self.scene!.frame.height - 100 {
+                    child.removeFromParent()
+                }
+            }
+        }
+    }
+    
+    func canShoot() {
+        if rockets > 0 {
+            player?.fire(canFire: 1)
+        }else {
+            player?.fire(canFire: 0)
+        }
+    }
+    
+    /*func fire() {
+        if rockets > 0
+        {
+            let laser
+        }
+    }*/
     
     /*func addEnemy() {
         
@@ -157,12 +202,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         
     }*/
     
-    func rockets() {
+    /*func rockets() {
         
-        //let rocketNode = SKSpriteNode(imageNamed: "Rocket");
-        //rocketNode.position = Player.
+        let rocketNode = SKSpriteNode(imageNamed: "Rocket");
+        rocketNode.position = Player.
         
-    }
+    }*/
 
 
 }
